@@ -1,0 +1,37 @@
+﻿@page "/start/{WordLength:int}/{IncorrectAttempts:int}"
+
+<div class="container">
+    <h2 class="text-center">
+        Let's Play!
+    </h2>
+    @if (string.IsNullOrEmpty(Word))
+    {
+        <div class="">
+            <strong class="fs-4 text-center text-primary d-block">Generating word!</strong>
+            <div class="spinner-border d-block" style="width: 5rem; height: 5rem;" role="status" aria-hidden="true"></div>
+        </div>
+        @*<p class="fs-4 text-center text-primary">Generating word!</p>*@
+    }
+    else
+    {
+        <div class="d-flex">
+            @foreach (var letter in HangmanWord)
+            {
+                <div class="border border-2 border-light p-4 m-2 d-inline">@letter</div>
+            }
+        </div>
+        @*<div class="input-group-lg">*@
+            <EditForm Model="GuessedLetter" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <label class="form-label" for="">Guess a letter:</label>
+                <InputText @bind-Value="GuessedLetter.Letter" />
+            </EditForm>
+        @*</div>*@
+    }
+</div>
+
+@code {
+
+}
