@@ -1,6 +1,8 @@
 ﻿//using Java.Lang;
 using hangman_blazor_maui.Data;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 //using Org.Apache.Http.Client;
 using System;
@@ -30,7 +32,7 @@ namespace hangman_blazor_maui.Pages
         {
             get
             {
-                var returnString = "";
+                var returnString = ""; 
                 for (var i = 0; i < Word.Length; i++)
                 {
                     if (RevealedIndexes.Contains(i))
@@ -46,9 +48,15 @@ namespace hangman_blazor_maui.Pages
             }
         }
 
-        public List<int> RevealedIndexes { get; set; } = new() { 1 };
+        public List<int> RevealedIndexes { get; set; } = new() {};
 
-        public GuessALetterModel GuessedLetter { get; set; }
+        public GuessALetterModel GuessedLetter { get; set; } = new();
+
+        public string AlertString { get; set; } = "";
+        public string AlertClass { get; set; } = "";
+
+        [Inject]
+        private NavigationManager navManager { get; set; }
 
 
         protected override async Task OnInitializedAsync()
@@ -76,10 +84,40 @@ namespace hangman_blazor_maui.Pages
             await JSRuntime.InvokeAsync<string>("console.log", args);
         }
 
-        public async Task HandleValidSubmit(object e)
-        {
-            await ConsoleLog(e.GetType());
+        public async Task HandleValidSubmit(EditContext e)
+        { 
+            await ConsoleLog("Am in HandleValidSubmit");
+            Validate();
+            if(IncorrectAttempts <= 0)
+            {
+                navManager.NavigateTo("/gameOver/" + Word);
+            }
+            if(HangmanWord.Equals(Word))
+            {
+                navManager.NavigateTo("/success/" + Word);
+            }
         }
 
+        private void Validate()
+        {
+            bool isInWord = false;
+            //string tempWord = Word.ToString();
+            IList<int> indexes = Word.AllIndexOf(GuessedLetter.Letter, StringComparison.OrdinalIgnoreCase);
+            if (indexes.Count == 0)
+            {
+                AlertString = "It was not in the word";
+                AlertClass = "alert-danger";
+                GuessedLetter.Letter = "";
+                //await JSRuntime.InvokeAsync<string>("alert", "It was not in the word");
+                IncorrectAttempts--;
+            } else
+            {
+                RevealedIndexes.AddRange(indexes);
+                //await JSRuntime.InvokeAsync<string>("alert", "It was in the word");
+                AlertString = "It was in the word!";
+                AlertClass = "alert-success";
+                GuessedLetter.Letter = "";
+            }
+        }
     }
 }

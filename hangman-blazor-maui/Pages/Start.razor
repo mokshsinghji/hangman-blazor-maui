@@ -20,14 +20,22 @@
                 <div class="border border-2 border-light p-4 m-2 d-inline">@letter</div>
             }
         </div>
+        @if(!String.IsNullOrEmpty(AlertString)) {
+            <div class="alert @AlertClass">@AlertString</div>
+        }
         @*<div class="input-group-lg">*@
-            <EditForm Model="GuessedLetter" OnValidSubmit="HandleValidSubmit">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
+        <EditForm Model="@GuessedLetter" OnValidSubmit="@HandleValidSubmit" >
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-                <label class="form-label" for="">Guess a letter:</label>
-                <InputText @bind-Value="GuessedLetter.Letter" />
-            </EditForm>
+            <p>
+                <label class="form-label">
+                    Guess a letter:
+                    <InputText @bind-Value="GuessedLetter.Letter" />
+                </label>
+            </p>
+        </EditForm>
+        <p>Incorrect Attempts remaining are: @IncorrectAttempts</p>
         @*</div>*@
     }
 </div>

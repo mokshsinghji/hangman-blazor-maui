@@ -1,0 +1,16 @@
+﻿@page "/gameOver/{Word:string}"
+
+<h3>Oh, no! You didn't get the word! It was @Word</h3>
+<button class="btn btn-primary" @onclick="OnButtonClick">Start again!</button>
+
+@code {
+    [Parameter]
+    public string Word { get; set; }
+    [Inject]
+    private NavigationManager navManager { get; set; }
+
+    public void OnButtonClick() {
+
+        navManager.NavigateTo("/");
+    }
+}
